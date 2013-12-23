@@ -5,94 +5,68 @@ using System.Text;
 
 namespace Collections.Trees {
    class NodoHash<T> {
-         Dictionary<char,NodoHash<T>>  hijos;
+         Dictionary<char,NodoHash<T>>  childrens;
          List<char>                    keys;
          int                           count;
-         int                           nivel;
-         T                             presente;
+         int                           level;
+         T                             valuePresent;
 
-         public       NodoHash( T cadenaId, int nivelAnt ) {
-            this.hijos = new Dictionary<char, NodoHash<T>>();
+         public       NodoHash( T elementT, int levelAnt ) {
+            this.childrens = new Dictionary<char, NodoHash<T>>();
             this.keys = new List<char>();
             this.count = 1;
-            this.presente = cadenaId;
-            this.nivel = nivelAnt + 1;
+            this.valuePresent = elementT;
+            this.level = levelAnt + 1;
          }
-         public   T              getValor( string Cadena ){
-            if( this.presente.ToString() == Cadena )
-               return presente;
-            if( this.hijos.ContainsKey( Cadena[this.nivel] ) )
-               return this.hijos[Cadena[this.nivel]].getValor( Cadena );
+         public   T              getElement( string stringId ){
+            if( this.valuePresent.ToString() == stringId )
+               return valuePresent;
+            if( this.childrens.ContainsKey( stringId[this.level] ) )
+               return this.childrens[stringId[this.level]].getElement( stringId );
             else
                return default(T);
          }
-         public   List<string>   getCadena( int valores ) {
+         public   List<string>   getString( int valores ) {
             List<string> rtn = new List<string>();
             if( valores <= 0 )
                return rtn;
-            rtn.Add( "-1|" + this.presente + "||-1" );
-            int indice = 0;
-            while( rtn.Count < valores && this.keys.Count > indice ) {
-               rtn.AddRange( this.hijos[this.keys[indice++]].getCadena( valores - 1 ) );
+            rtn.Add( this.valuePresent );
+            int index = 0;
+            while( rtn.Count < valores && this.keys.Count > index ) {
+               rtn.AddRange( this.childrens[this.keys[index++]].getString( valores - 1 ) );
             }
             return rtn;
          }
-         public   List<string>   getCadenasCon( string subCadena, int valores ) {
-            return this.filtroCadenas( subCadena.ToUpper(), valores );
+         public   List<string>   getStringWith( string filter, int valores ) {
+            return this.filterStrings( filter.ToUpper(), valores );
          }
-         public   void           AgregarCadena( T cadenaId ) {
-            this.AgregarNodo( cadenaId );
+         public   void           AddElement( T elementT ) {
+            this.AddNode( elementT );
          }
-         private  void           AgregarNodo( T cadenaId ) {
+         private  void           AddNode( T elementT ) {
             T aux;
-            if( this.presente.ToString().Length >= cadenaId.ToString().Length ) {
-               aux = this.presente;
-               this.presente = cadenaId;
-               cadenaId = aux;
+            if( this.valuePresent.ToString().Length >= elementT.ToString().Length ) {
+               aux = this.valuePresent;
+               this.valuePresent = elementT;
+               elementT = aux;
             }
-            int indice = cadenaId.ToString().Length > this.nivel ? this.nivel : cadenaId.ToString().Length - 1;
-            if( !this.hijos.ContainsKey( cadenaId.ToString()[indice] ) ) {
-               this.hijos.Add( cadenaId.ToString()[indice], new NodoHash<T>( cadenaId, this.nivel ) );
-               this.keys.Add( cadenaId.ToString()[indice] );
+            int indice = elementT.ToString().Length > this.level ? this.level : elementT.ToString().Length - 1;
+            if( !this.childrens.ContainsKey( elementT.ToString()[indice] ) ) {
+               this.childrens.Add( elementT.ToString()[indice], new NodoHash<T>( elementT, this.level ) );
+               this.keys.Add( elementT.ToString()[indice] );
             } else {
-               this.hijos[cadenaId.ToString()[indice]].AgregarNodo( cadenaId );
+               this.childrens[elementT.ToString()[indice]].AddNode( elementT );
             }
             this.keys.Sort();
          }
-         private  List<string>   filtroCadenas( string subCadena, int valores ) {
-            if( subCadena.Length == this.nivel ) {
-               return this.getCadena( valores );
+         private  List<string>   filterStrings( string filter, int valores ) {
+            if( filter.Length == this.level ) {
+               return this.getString( valores );
             }
-            if( this.hijos.ContainsKey( subCadena[this.nivel] ) )
-               return this.hijos[subCadena[this.nivel]].filtroCadenas( subCadena, valores );
+            if( this.childrens.ContainsKey( filter[this.level] ) )
+               return this.childrens[filter[this.level]].filterStrings( filter, valores );
             else
                return new List<string>();
          } 
-   }
-   class ParLlave {
-      public   string   nombre{get;set;}
-      public   int      arrayValor{get;set;}
-      
-      public ParLlave( string _nombre, int _val ) {
-         this.nombre          = _nombre;
-         this.arrayValor      = _val;
-      }
-      public override string ToString() {
-         return nombre;
-      }
-
-   }
-   class Sctruct {
-      string  idProducto{get;set;}
-      string  nombre{get;set;}
-      decimal precioUnitario{get;set;}
-      
-      public Sctruct( string _nombre, decimal _val) {
-         this.nombre          = _nombre;
-         this.precioUnitario  = _val;
-      }
-      public override string ToString() {
-         return nombre;
-      }
    }
 }
