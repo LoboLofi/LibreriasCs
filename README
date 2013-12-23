@@ -1,1 +1,8 @@
-Brace yourself, a new libraries for Windows Forms was born.
+Brace yourself, a new libraries for Windows C# was born.
+
+Actually, this's just a set of classes of common use:
+
+A hash tree that implements a string type key for sort and search.
+Parser functions to convert strings to numeric types and viceversa.
+
+And it's all, for now.
